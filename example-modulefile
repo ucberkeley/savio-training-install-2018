@@ -1,0 +1,14 @@
+#%Module1.0
+## by Lizzy Borden
+
+proc ModulesHelp { } {
+  puts stderr "This module sets up geos 3.6.2 in your environment."
+}
+
+module-whatis "geos 3.6.2"
+
+set GEOS_DIR /global/home/groups/my_group/modules/geos/3.6.2
+prepend-path PATH ${GEOS_DIR}/bin
+prepend-path LD_LIBRARY_PATH ${GEOS_DIR}/lib
+
+
