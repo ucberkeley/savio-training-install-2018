@@ -86,7 +86,7 @@ cd ${SRCDIR}
 wget http://pyyaml.org/download/libyaml/${PKG}-${V}.tar.gz
 tar -xvzf ${PKG}-${V}.tar.gz
 cd ${PKG}-${V}
-module load gcc/4.8.5
+module load gcc/6.3.0
 # --prefix is key to install in directory you have access to
 ./configure  --prefix=$INSTALLDIR | tee ../configure-${V}.log
 make | tee ../make-${V}.log
@@ -116,7 +116,7 @@ cd ${SRCDIR}
 wget http://download.osgeo.org/${PKG}/${PKG}-${V}.tar.bz2
 tar -xvjf ${PKG}-${V}.tar.bz2
 cd ${PKG}-${V}
-module load gcc/4.8.5
+module load gcc/4.8.5  ## R module depends on 4.8.5
 # --prefix is key to install in directory you have access to
 ./configure  --prefix=$INSTALLDIR | tee ../configure-${V}.log
 make | tee ../make-${V}.log
@@ -145,7 +145,7 @@ If a header file can't be found, you'll likely see comments about *.h* files not
 
 # Installing Python and R packages 
 
-Note: in the following we'll install in our user directory; it would take some additional wrangling to install in a location available to other group members.
+This first example illustrates how to install a Python package under a circumstance (which is somewhat contrived in this case) where we need to tell pip where to find some dependency files. 
 
 Note if we install pyyaml outside a virtualenv, we don't need to do all this because Savio uses Anaconda and has the yaml system package installed and the installation of pyyaml knows where to find yaml.h and libyaml.so. So this is primarily an illustration and not what would be needed in practice (plus pyyaml is already installed on Savio).
 
@@ -159,25 +159,29 @@ V=0.1.7
 PKGDIR=/global/home/groups/${my_group}/software/modules/yaml/${V}
 
 # This fails:
-pip install --user --ignore-installed ${PYPKG}
-ls .local/lib/python3.6/site-packages
+which python
+module purge  # otherwise demo fails as pyyaml is found from system python 
+pip install --global-option="--with-libyaml" ${PYPKG}  # use faster libyaml bindings
 # can't find yaml.h file
 
-# This fails too:
-pip install --user --ignore-installed --global-option=build_ext  \
-    --global-option="-I/${PKGDIR}/include" ${PYPKG}
-# can't find libyaml.so file
-
 # This succeeds:
-pip install --user --ignore-installed --global-option=build_ext \
-    --global-option="-I/${PKGDIR}/include" \
-    --global-option="-L/${PKGDIR}/lib" ${PYPKG}
+pip install -v --global-option="--with-libyaml" --global-option=build_ext  \
+    --global-option="-I/${PKGDIR}/include" ${PYPKG}
+
+ls /global/home/groups/${my_group}/pyyaml/lib/python3.6/site-packages
 ```
 
+Note that if you install a Python package not in a virtualenv or conda environment, you'll need:
+```
+pip install --user package_name
+```
+to install it in your home directory. Otherwise pip will try to install it in a system directory that you don't have permissions to write to.
 
 # Installing Python and R packages 
 
-Here's an R example. In this case compilation would go ok, except R needs access to a geos-related binary for configuration and to the libgeos library file when it test runs the installed rgeos package at the end of the process. 
+Here's an R example. In this case compilation would go ok, except R needs access to a geos-related binary for configuration and to the libgeos library file when it test runs the installed rgeos package at the end of the process.
+
+Note: in the following we'll install in our user directory; it would take some additional wrangling to install in a location available to other group members.
 
 ```
 V=3.6.2
@@ -197,7 +201,7 @@ export LD_LIBRARY_PATH=${INSTALLDIR}/lib:${LD_LIBRARY_PATH}
 Rscript -e "install.packages('rgeos', repos = 'https://cran.cnr.berkeley.edu')"
 ```
 
-You may sometimes need to use the `configure.args` or `configure.vars` arguments to `install.packages()` to provide information on the location of `include` and `lib` directories of dependencies (similar to what we did for pyyaml. 
+You may sometimes need to use the `configure.args` or `configure.vars` arguments to `install.packages()` to provide information on the location of `include` and `lib` directories of dependencies (similar to what we did for pyyaml).
 
 # Accessing executables and libraries at run-time
 

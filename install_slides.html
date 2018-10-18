@@ -6,8 +6,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <meta name="author" content="November 1, 2017" />
-  <title>Savio SL7/installation training</title>
+  <meta name="author" content="October 18, 2018" />
+  <title>Savio installation training</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" type="text/css" media="screen, projection, print"
     href="http://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css" />
@@ -16,24 +16,23 @@
 </head>
 <body>
 <div class="slide titlepage">
-  <h1 class="title">Savio SL7/installation training</h1>
+  <h1 class="title">Savio installation training</h1>
   <p class="author">
-November 1, 2017
+October 18, 2018
   </p>
 </div>
 <div id="introduction" class="slide section level1">
 <h1>Introduction</h1>
 <p>We'll spend about 30 minutes going through this material as a demonstration. I encourage you to login to your account and try out the various examples yourself as we go through them. The remainder of the scheduled time will be open time for you to work on your installations with each other and with help from us.</p>
 <p>Some of this material is based on the extensive Savio documention we have prepared and continue to prepare, available at <a href="http://research-it.berkeley.edu/services/high-performance-computing/user-guide" class="uri">http://research-it.berkeley.edu/services/high-performance-computing/user-guide</a>. In particular we have some detailed installation instructions under the &quot;Installing your own&quot; tab at <a href="http://research-it.berkeley.edu/services/high-performance-computing/accessing-and-installing-software" class="uri">http://research-it.berkeley.edu/services/high-performance-computing/accessing-and-installing-software</a>.</p>
-<p>The materials for this tutorial are available using git at <a href="https://github.com/ucberkeley/savio-training-sl7-2017" class="uri">https://github.com/ucberkeley/savio-training-sl7-2017</a> or simply as a <a href="https://github.com/ucberkeley/savio-training-sl7-2017/archive/master.zip">zip file</a>.</p>
+<p>The materials for this tutorial are available using git at <a href="https://github.com/ucberkeley/savio-training-install-2018" class="uri">https://github.com/ucberkeley/savio-training-install-2018</a> or simply as a <a href="https://github.com/ucberkeley/savio-training-install-2018/archive/master.zip">zip file</a>.</p>
 <p>These <em>install.html</em> and <em>install_slides.html</em> files were created from <em>install.md</em> by running 'make' within the repository directory (see <em>Makefile</em> for details on how that creates the html files).</p>
-<p>Please see this <a href="https://github.com/ucberkeley/savio-training-intro-2017/archive/master.zip">zip file</a> for materials from our introductory training on September 19, including accessing Savio, data transfer, and basic job submission.</p>
+<p>Please see this <a href="https://github.com/ucberkeley/savio-training-intro-2018/archive/master.zip">zip file</a> for materials from our introductory training on September 18, including accessing Savio, data transfer, and basic job submission.</p>
 </div>
 <div id="outline" class="slide section level1">
 <h1>Outline</h1>
 <p>This training session will cover the following topics:</p>
 <ul>
-<li>Differences between SL6 and SL7 on Savio</li>
 <li>Software installation
 <ul>
 <li>Installing third-party software</li>
@@ -45,18 +44,6 @@ November 1, 2017
 </ul></li>
 <li>Hands-on software installation help</li>
 </ul>
-</div>
-<div id="whats-new-with-sl7-on-savio" class="slide section level1">
-<h1>What's new with SL7 on Savio?</h1>
-<ul>
-<li>Updated Intel and GNU (gcc) compilers, and updated openMPI</li>
-<li>All Python and R packages will be available as soon as you load the main <code>python</code> or <code>r</code> modules</li>
-<li>Updated Python (Python 3.6) and R (R 3.4.x) will be available.</li>
-<li>Python installation now uses Anaconda distribution instead of being build from source.</li>
-<li>An extensive set of machine learning/deep learning and related packages available: tensorflow, h2o, mxnet, theano, superlearner.</li>
-</ul>
-<p>You can ssh to <code>sl7.brc.berkeley.edu</code> and run <code>module avail</code> to see the list. Do note that we'll update the versions in some cases before final release.</p>
-<p>Please see the <a href="http://research-it.berkeley.edu/services/high-performance-computing/sl7-upgrade">SL7 migration page</a> for more details.</p>
 </div>
 <div id="modules" class="slide section level1">
 <h1>Modules</h1>
@@ -78,27 +65,25 @@ November 1, 2017
 <h1>Installation logistics</h1>
 <p>We recommend you set up a directory structure that mimics how we install software on Savio. We'll assume you are installing in a group directory, but you could equally well do this in your home directory or even on scratch (albeit with the danger the installation might be purged).</p>
 <p>If you haven't already set up the directory structure for your group, here are the steps:</p>
-<pre><code>cd /global/home/groups/my_group
-mkdir sl7
-mkdir sl7/sources
-mkdir sl7/modules
-mkdir sl7/scripts
-mkdir sl7/modfiles
-chmod -R g+rwX sl7</code></pre>
+<pre><code>my_group=co_stat
+cd /global/home/groups/${my_group}
+mkdir software
+mkdir software/sources
+mkdir software/modules
+mkdir software/scripts
+mkdir software/modfiles
+chmod -R g+rwX software</code></pre>
 <p>However, you can manage your directories as you like; the above is just a suggestion.</p>
 </div>
 <div id="third-party-software-installation---examples" class="slide section level1">
 <h1>Third-party software installation - examples</h1>
 <p>Here are a couple examples of installing a piece of software in your home directory.</p>
-<p>I'm actually going to do the installations under SL6 because the demos were developed for SL6 and don't readily port over to SL7 for reasons that are not germane to the topic of demonstrating installation. In general what we'll do here is how you'll install things on SL7 as well.</p>
 <h3 id="yaml-package-example">yaml package example</h3>
 <pre><code># install yaml, an optional dependency for Python yaml package
 PKG=yaml
 V=0.1.7
-my_group=co_stat
-os=sl6
 
-DIR=/global/home/groups/${my_group}/${os}
+DIR=/global/home/groups/${my_group}/software
 SRCDIR=${DIR}/sources/${PKG}/${V}
 INSTALLDIR=${DIR}/modules/${PKG}/${V}
 
@@ -109,11 +94,12 @@ cd ${SRCDIR}
 wget http://pyyaml.org/download/libyaml/${PKG}-${V}.tar.gz
 tar -xvzf ${PKG}-${V}.tar.gz
 cd ${PKG}-${V}
+module load gcc/6.3.0
 # --prefix is key to install in directory you have access to
 ./configure  --prefix=$INSTALLDIR | tee ../configure-${V}.log
 make | tee ../make-${V}.log
 make install | tee ../install-${V}.log</code></pre>
-<p>To save the information on how you installed the software, we recommend you save the code above. In this case you would save it in <code>${os}/scripts/yaml/install.sh</code>.</p>
+<p>To save the information on how you installed the software, we recommend you save the code above. In this case you would save it in <code>software/scripts/yaml/install.sh</code>.</p>
 </div>
 <div id="third-party-software-installation---examples-1" class="slide section level1">
 <h1>Third-party software installation - examples</h1>
@@ -122,7 +108,7 @@ make install | tee ../install-${V}.log</code></pre>
 <pre><code>PKG=geos
 V=3.6.2
 
-DIR=/global/home/groups/${my_group}/${os}
+DIR=/global/home/groups/${my_group}/software
 SRCDIR=${DIR}/sources/${PKG}/${V}
 INSTALLDIR=${DIR}/modules/${PKG}/${V}
 
@@ -133,6 +119,7 @@ cd ${SRCDIR}
 wget http://download.osgeo.org/${PKG}/${PKG}-${V}.tar.bz2
 tar -xvjf ${PKG}-${V}.tar.bz2
 cd ${PKG}-${V}
+module load gcc/4.8.5  ## R module depends on 4.8.5
 # --prefix is key to install in directory you have access to
 ./configure  --prefix=$INSTALLDIR | tee ../configure-${V}.log
 make | tee ../make-${V}.log
@@ -154,60 +141,64 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALLDIR} . | tee ../cmake.log</code></pre>
 </div>
 <div id="installing-python-and-r-packages" class="slide section level1">
 <h1>Installing Python and R packages</h1>
-<p>Note: in the following we'll install in our user directory; it would take some additional wrangling to install in a location available to other group members.</p>
-<pre><code>module load python/2.7.8 pip
+<p>This first example illustrates how to install a Python package under a circumstance (which is somewhat contrived in this case) where we need to tell pip where to find some dependency files.</p>
+<p>Note if we install pyyaml outside a virtualenv, we don't need to do all this because Savio uses Anaconda and has the yaml system package installed and the installation of pyyaml knows where to find yaml.h and libyaml.so. So this is primarily an illustration and not what would be needed in practice (plus pyyaml is already installed on Savio).</p>
+<pre><code>module load python/3.6
+virtualenv /global/home/groups/${my_group}/pyyaml
+source /global/home/groups/${my_group}/pyyaml/bin/activate
+
 PYPKG=pyyaml
 V=0.1.7
-PKGDIR=/global/home/groups/${my_group}/${os}/modules/yaml/${V}
+PKGDIR=/global/home/groups/${my_group}/software/modules/yaml/${V}
 
 # This fails:
-pip install --user ${PYPKG}
-ls .local/lib/python2.7/site-packages
+which python
+module purge  # otherwise demo fails as pyyaml is found from system python 
+pip install --global-option=&quot;--with-libyaml&quot; ${PYPKG}  # use faster libyaml bindings
 # can&#39;t find yaml.h file
 
-# This fails too:
-pip install --user --ignore-installed --global-option=build_ext  \
-    --global-option=&quot;-I/${PKGDIR}/include&quot; ${PYPKG}
-# can&#39;t find libyaml.so file
-
 # This succeeds:
-pip install --user --ignore-installed --global-option=build_ext \
-    --global-option=&quot;-I/${PKGDIR}/include&quot; \
-    --global-option=&quot;-L/${PKGDIR}/lib&quot; ${PYPKG}</code></pre>
-<p>Sidenote: pyyaml is already installed for Python on SL7 (hence the reason this demo wouldn't work on SL7).</p>
+pip install -v --global-option=&quot;--with-libyaml&quot; --global-option=build_ext  \
+    --global-option=&quot;-I/${PKGDIR}/include&quot; ${PYPKG}
+
+ls /global/home/groups/${my_group}/pyyaml/lib/python3.6/site-packages</code></pre>
+<p>Note that if you install a Python package not in a virtualenv or conda environment, you'll need:</p>
+<pre><code>pip install --user package_name</code></pre>
+<p>to install it in your home directory. Otherwise pip will try to install it in a system directory that you don't have permissions to write to.</p>
 </div>
 <div id="installing-python-and-r-packages-1" class="slide section level1">
 <h1>Installing Python and R packages</h1>
 <p>Here's an R example. In this case compilation would go ok, except R needs access to a geos-related binary for configuration and to the libgeos library file when it test runs the installed rgeos package at the end of the process.</p>
+<p>Note: in the following we'll install in our user directory; it would take some additional wrangling to install in a location available to other group members.</p>
 <pre><code>V=3.6.2
-PKGDIR=/global/home/groups/${my_group}/${os}/modules/geos/${V}
+PKGDIR=/global/home/groups/${my_group}/software/modules/geos/${V}
 module load r/3.4.2
 
-Rscript -e &quot;install.packages(&#39;rgeos&#39;, repos = &#39;http://cran.cnr.berkeley.edu&#39;)&quot;
+Rscript -e &quot;install.packages(&#39;rgeos&#39;, repos = &#39;https://cran.cnr.berkeley.edu&#39;)&quot;
 # that fails as it can&#39;t find geos-config,
 # an executable installed as part of geos
 
 export PATH=${PKGDIR}/bin:${PATH}
-Rscript -e &quot;install.packages(&#39;rgeos&#39;, repos = &#39;http://cran.cnr.berkeley.edu&#39;)&quot;
+Rscript -e &quot;install.packages(&#39;rgeos&#39;, repos = &#39;https://cran.cnr.berkeley.edu&#39;)&quot;
 # that installs (almost), but fails to run when tested because
 # libgoes-3.6.2.so can&#39;t be found
 
 export LD_LIBRARY_PATH=${INSTALLDIR}/lib:${LD_LIBRARY_PATH}
-Rscript -e &quot;install.packages(&#39;rgeos&#39;, repos = &#39;http://cran.cnr.berkeley.edu&#39;)&quot;</code></pre>
-<p>You may sometimes need to use the <code>configure.args</code> or <code>configure.vars</code> arguments to <code>install.packages()</code> to provide information on the location of <code>include</code> and <code>lib</code> directories of dependencies (similar to what we did for pyyaml.</p>
+Rscript -e &quot;install.packages(&#39;rgeos&#39;, repos = &#39;https://cran.cnr.berkeley.edu&#39;)&quot;</code></pre>
+<p>You may sometimes need to use the <code>configure.args</code> or <code>configure.vars</code> arguments to <code>install.packages()</code> to provide information on the location of <code>include</code> and <code>lib</code> directories of dependencies (similar to what we did for pyyaml).</p>
 </div>
 <div id="accessing-executables-and-libraries-at-run-time" class="slide section level1">
 <h1>Accessing executables and libraries at run-time</h1>
 <p>The issues we saw installing rgeos were not really compilation issues, but rather issues in finding binaries and libraries at run time.</p>
 <p>For binaries, Linux only looks in certain directories for executables. These directories are in your PATH variable. So in the previous example we added the directory containing geos-config to our PATH.</p>
 <p>For library (.so) files Linux only looks in certain directories for the location of .so library files. To tell Linux to look in additional directories, you can add them to your LD_LIBRARY_PATH variable.</p>
-<p>In the rgeos case, anytime we want to use the rgeos package, we need to make sure LD_LIBRARY_PATH is set so that rgeos can find <code>libgoes-3.6.2.so</code>.</p>
+<p>In the rgeos case, anytime we want to use the rgeos package, we need to make sure LD_LIBRARY_PATH is set so that rgeos can find <code>libgeos-3.6.2.so</code>.</p>
 </div>
 <div id="installation-for-an-entire-group" class="slide section level1">
 <h1>Installation for an entire group</h1>
 <p>Optionally if you'd like your group members to have write access to the directories for the software you installed, you would do this:</p>
 <pre><code>PKG=rgeos
-cd /global/home/groups/${my_group}/${os}
+cd /global/home/groups/${my_group}/software
 chmod -R g+rwX {sources,modfiles,modules,scripts}/${PKG}</code></pre>
 </div>
 <div id="setting-up-a-module-for-your-software" class="slide section level1">
@@ -215,13 +206,13 @@ chmod -R g+rwX {sources,modfiles,modules,scripts}/${PKG}</code></pre>
 <p>You may also want to set up a module for the software you just installed. This allows you and your group members to easily set your environment so that the software is accessible for you. To do this you need to do the following.</p>
 <p>First we'll need a directory in which to store our module files:</p>
 <pre><code>V=3.6.2
-MYMODULEPATH=/global/home/groups/${my_group}/${os}/modfiles
+MYMODULEPATH=/global/home/groups/${my_group}/software/modfiles
 mkdir -p ${MYMODULEPATH}/geos
 export MODULEPATH=${MODULEPATH}:${MYMODULEPATH}  # good to put this in your .bashrc</code></pre>
 <p>Now we create a module file for the version (or one each for multiple versions) of the software we have installed. E.g., for our geos installation we would edit <code>${MYMODULEPATH}/geos/3.6.2</code> based on looking at examples of other module files. An example module file for our geos example is <em>example-modulefile</em>.</p>
 <pre><code>cp example-modulefile ${MYMODULEPATH}/geos/3.6.2</code></pre>
 <p>Or see some of the Savio system-level modules in <code>/global/software/sl-7.x86_64/modfiles</code>.</p>
-<pre><code>cat /global/software/sl-7.x86_64/modfiles/apps/ml/tensorflow/1.0.0-py36</code></pre>
+<pre><code>cat /global/software/sl-7.x86_64/modfiles/apps/ml/tensorflow/1.7.0-py36</code></pre>
 </div>
 <div id="how-to-get-additional-help" class="slide section level1">
 <h1>How to get additional help</h1>
